@@ -247,6 +247,18 @@ class GithubPRFileViewer {
     collapseViewedButton.textContent = 'Collapse Viewed Files';
     collapseViewedButton.addEventListener('click', () => this.collapseViewedFiles());
     
+    // Create view all button
+    const viewAllButton = document.createElement('button');
+    viewAllButton.className = 'pr-file-viewer-toggle-all';
+    viewAllButton.textContent = 'Mark All as Viewed';
+    viewAllButton.addEventListener('click', () => this.markAllAsViewed());
+    
+    // Create unview all button
+    const unviewAllButton = document.createElement('button');
+    unviewAllButton.className = 'pr-file-viewer-toggle-all';
+    unviewAllButton.textContent = 'Mark All as Unviewed';
+    unviewAllButton.addEventListener('click', () => this.markAllAsUnviewed());
+    
     // Create status text
     const statusText = document.createElement('span');
     statusText.className = 'pr-file-viewer-status';
@@ -255,6 +267,8 @@ class GithubPRFileViewer {
     // Add controls to the page
     controls.appendChild(expandAllButton);
     controls.appendChild(collapseViewedButton);
+    controls.appendChild(viewAllButton);
+    controls.appendChild(unviewAllButton);
     controls.appendChild(statusText);
     fileContainer.parentNode.insertBefore(controls, fileContainer);
   }
@@ -300,6 +314,58 @@ class GithubPRFileViewer {
     });
     
     this.saveViewedFiles();
+  }
+
+  // Mark all files as viewed
+  markAllAsViewed() {
+    const fileElements = document.querySelectorAll('.js-file');
+    
+    fileElements.forEach(fileEl => {
+      const filePath = this.getFilePath(fileEl);
+      if (!filePath) return;
+      
+      // Add viewed class
+      fileEl.classList.add('pr-file-viewer-viewed');
+      
+      // Update viewedFiles object
+      if (!this.viewedFiles[filePath]) {
+        this.viewedFiles[filePath] = {
+          viewed: true,
+          collapsed: false,
+          timestamp: Date.now()
+        };
+      }
+    });
+    
+    // Save to storage
+    this.saveViewedFiles();
+    
+    // Update status text
+    this.updateStatusText(document.querySelector('.pr-file-viewer-status'));
+  }
+  
+  // Mark all files as unviewed
+  markAllAsUnviewed() {
+    const fileElements = document.querySelectorAll('.js-file');
+    
+    // Remove viewed class from all files
+    fileElements.forEach(fileEl => {
+      fileEl.classList.remove('pr-file-viewer-viewed');
+      fileEl.classList.remove('pr-file-viewer-collapsed');
+      
+      // Update button text if needed
+      const button = fileEl.querySelector('.pr-file-viewer-collapse-button');
+      if (button) button.textContent = 'Collapse';
+    });
+    
+    // Clear viewedFiles object for this PR
+    this.viewedFiles = {};
+    
+    // Save to storage
+    this.saveViewedFiles();
+    
+    // Update status text
+    this.updateStatusText(document.querySelector('.pr-file-viewer-status'));
   }
 
   // Set up mutation observer to handle dynamically loaded content

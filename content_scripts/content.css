@@ -40,8 +40,16 @@
   display: none;
 }
 
-.pr-file-viewer-toggle-all {
+.pr-file-viewer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   margin: 10px 0;
+  gap: 8px;
+}
+
+.pr-file-viewer-toggle-all {
+  margin: 0;
   padding: 6px 12px;
   background-color: #f6f8fa;
   border: 1px solid #d1d5da;
