@@ -112,6 +112,10 @@ class GithubPRFileViewer {
     this.prId = this.getPRId();
     this.isFilesTab = this.checkIsFilesTab();
     this.initialized = false;
+    this.lineStats = {
+      totalLines: 0,
+      viewedLines: 0
+    };
     
     debugLog('Constructor called', { 
       prId: this.prId, 
@@ -297,9 +301,15 @@ class GithubPRFileViewer {
         debugLog(`Button added directly to header for ${filePath}`);
       }
       
+      // Count lines in this file
+      const lineCount = this.countLinesInFile(fileEl);
+      if (lineCount > 0) {
+        this.lineStats.totalLines += lineCount;
+      }
+      
       // Mark as viewed if in our list
       if (this.viewedFiles[filePath]) {
-        this.markFileAsViewed(fileEl, filePath);
+        this.markFileAsViewed(fileEl, filePath, lineCount);
         
         // Collapse if setting says so
         if (this.viewedFiles[filePath].collapsed) {
@@ -377,17 +387,47 @@ class GithubPRFileViewer {
     if (button) button.textContent = 'Collapse';
   }
 
+  // Count lines of code in a file element
+  countLinesInFile(fileEl) {
+    // Look for line numbers in the file
+    const lineNumbers = fileEl.querySelectorAll('.js-line-number, .blob-num');
+    if (lineNumbers && lineNumbers.length > 0) {
+      // Get the last line number
+      const lastLineEl = lineNumbers[lineNumbers.length - 1];
+      const lineText = lastLineEl.textContent.trim();
+      const lineNum = parseInt(lineText, 10);
+      
+      if (!isNaN(lineNum) && lineNum > 0) {
+        return lineNum;
+      }
+    }
+    
+    // Fallback to counting diff lines
+    const diffLines = fileEl.querySelectorAll('.js-file-line, .blob-code');
+    return diffLines.length;
+  }
+
   // Mark a file as viewed
-  markFileAsViewed(fileEl, filePath) {
+  markFileAsViewed(fileEl, filePath, lineCount = 0) {
     debugLog(`Marking file as viewed: ${filePath}`);
     fileEl.classList.add('pr-file-viewer-viewed');
     
     if (!this.viewedFiles[filePath]) {
+      // If line count wasn't provided, try to count now
+      if (lineCount <= 0) {
+        lineCount = this.countLinesInFile(fileEl);
+      }
+      
       this.viewedFiles[filePath] = { 
         viewed: true, 
         collapsed: false,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        lineCount: lineCount
       };
+      
+      // Update viewed lines count
+      this.lineStats.viewedLines += lineCount;
+      
       this.saveViewedFiles();
     }
   }
@@ -508,8 +548,16 @@ class GithubPRFileViewer {
     const totalFiles = document.querySelectorAll('.js-file, .file, [data-file-type]').length;
     const viewedCount = Object.keys(this.viewedFiles).length;
     
-    statusElement.textContent = `${viewedCount}/${totalFiles} files viewed`;
-    debugLog(`Status updated: ${viewedCount}/${totalFiles} files viewed`);
+    // Calculate percentage of files viewed
+    const filePercentage = totalFiles > 0 ? Math.round((viewedCount / totalFiles) * 100) : 0;
+    
+    // Calculate percentage of lines viewed
+    const linePercentage = this.lineStats.totalLines > 0 
+      ? Math.round((this.lineStats.viewedLines / this.lineStats.totalLines) * 100) 
+      : 0;
+    
+    statusElement.textContent = `${viewedCount}/${totalFiles} files viewed (${filePercentage}%) • ${linePercentage}% of code reviewed`;
+    debugLog(`Status updated: ${viewedCount}/${totalFiles} files viewed (${filePercentage}%), ${linePercentage}% of code reviewed`);
   }
 
   // Expand all files
@@ -560,9 +608,15 @@ class GithubPRFileViewer {
     const fileElements = document.querySelectorAll('.js-file, .file, [data-file-type]');
     let viewedCount = 0;
     
+    // Reset viewed lines count before marking all
+    this.lineStats.viewedLines = 0;
+    
     fileElements.forEach(fileEl => {
       const filePath = this.getFilePath(fileEl);
       if (!filePath) return;
+      
+      // Count lines in this file
+      const lineCount = this.countLinesInFile(fileEl);
       
       // Add viewed class
       fileEl.classList.add('pr-file-viewer-viewed');
@@ -572,8 +626,13 @@ class GithubPRFileViewer {
         this.viewedFiles[filePath] = {
           viewed: true,
           collapsed: false,
-          timestamp: Date.now()
+          timestamp: Date.now(),
+          lineCount: lineCount
         };
+        
+        // Update viewed lines count
+        this.lineStats.viewedLines += lineCount;
+        
         viewedCount++;
       }
     });
@@ -604,6 +663,9 @@ class GithubPRFileViewer {
     
     // Clear viewedFiles object for this PR
     this.viewedFiles = {};
+    
+    // Reset viewed lines count
+    this.lineStats.viewedLines = 0;
     
     // Save to storage
     this.saveViewedFiles();
