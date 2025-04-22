@@ -1,0 +1,62 @@
+/* GitHub PR File Viewer Styles */
+
+.pr-file-viewer-collapse-button {
+  margin-left: 8px;
+  padding: 2px 8px;
+  background-color: #f6f8fa;
+  border: 1px solid #d1d5da;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pr-file-viewer-collapse-button:hover {
+  background-color: #e1e4e8;
+}
+
+.pr-file-viewer-viewed {
+  position: relative;
+}
+
+.pr-file-viewer-viewed::before {
+  content: "✓";
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  color: #2cbe4e;
+  font-weight: bold;
+  z-index: 1;
+}
+
+.pr-file-viewer-collapsed .file-header {
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.pr-file-viewer-collapsed .file-info,
+.pr-file-viewer-collapsed .js-file-content,
+.pr-file-viewer-collapsed .data {
+  display: none;
+}
+
+.pr-file-viewer-toggle-all {
+  margin: 10px 0;
+  padding: 6px 12px;
+  background-color: #f6f8fa;
+  border: 1px solid #d1d5da;
+  border-radius: 3px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.pr-file-viewer-toggle-all:hover {
+  background-color: #e1e4e8;
+}
+
+.pr-file-viewer-status {
+  margin-left: 12px;
+  font-size: 12px;
+  color: #586069;
+} 

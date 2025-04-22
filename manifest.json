@@ -1,35 +1,32 @@
 {
   "manifest_version": 2,
-  "name": "Firefox Addon",
+  "name": "GitHub PR File Viewer",
   "version": "1.0.0",
-  "description": "A template Firefox addon",
+  "description": "Allows collapsing previously viewed files in GitHub pull requests",
   "icons": {
     "48": "icons/icon-48.png",
     "96": "icons/icon-96.png"
   },
   "permissions": [
-    "activeTab",
-    "storage"
+    "storage",
+    "alarms"
   ],
   "browser_action": {
     "default_icon": {
       "19": "icons/icon-19.png",
       "38": "icons/icon-38.png"
     },
-    "default_title": "Firefox Addon",
+    "default_title": "GitHub PR File Viewer",
     "default_popup": "popup/popup.html"
-  },
-  "background": {
-    "scripts": ["background.js"]
   },
   "content_scripts": [
     {
-      "matches": ["*://*/*"],
-      "js": ["content_scripts/content.js"]
+      "matches": ["*://github.com/*/pull/*"],
+      "js": ["content_scripts/content.js"],
+      "css": ["content_scripts/content.css"]
     }
   ],
-  "options_ui": {
-    "page": "options/options.html",
-    "browser_style": true
+  "background": {
+    "scripts": ["background.js"]
   }
 } 
