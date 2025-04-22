@@ -24,7 +24,7 @@
       "matches": ["*://github.com/*"],
       "js": ["content_scripts/content.js"],
       "css": ["content_scripts/content.css"],
-      "run_at": "document_start"
+      "run_at": "document_idle"
     }
   ],
   "background": {

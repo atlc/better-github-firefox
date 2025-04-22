@@ -52,9 +52,22 @@ function debugLog(...args) {
   }
 }
 
-// Add debug panel to the page
+// Safely add debug panel to the page
 function addDebugPanel() {
   if (!DEBUG) return;
+  
+  // Wait for document.body to be available
+  if (!document.body) {
+    // Try again once the DOM content is loaded
+    debugLog('document.body not available yet, waiting for DOMContentLoaded');
+    document.addEventListener('DOMContentLoaded', addDebugPanel);
+    return;
+  }
+  
+  // If panel already exists, don't add again
+  if (document.getElementById('pr-file-viewer-debug')) {
+    return;
+  }
   
   const panel = document.createElement('div');
   panel.style.position = 'fixed';
@@ -91,6 +104,12 @@ function addDebugPanel() {
 function updateDebugStatus(message) {
   if (!DEBUG) return;
   
+  // Wait for document to be ready
+  if (!document.body) {
+    setTimeout(() => updateDebugStatus(message), 500);
+    return;
+  }
+  
   const status = document.getElementById('pr-file-viewer-debug-status');
   if (status) {
     const timestamp = new Date().toLocaleTimeString();
@@ -126,6 +145,13 @@ class GithubPRFileViewer {
   // Initialize the file viewer
   async init() {
     debugLog('Init called');
+    
+    // Make sure document.body is available
+    if (!document.body) {
+      debugLog('document.body not available yet, waiting for DOMContentLoaded');
+      document.addEventListener('DOMContentLoaded', () => this.init());
+      return;
+    }
     
     // Add some delay to ensure GitHub has finished rendering
     setTimeout(async () => {
@@ -166,6 +192,13 @@ class GithubPRFileViewer {
 
   // Add a visible indicator to show the extension is working
   addIndicator() {
+    // Make sure document.body is available
+    if (!document.body) {
+      debugLog('document.body not available yet for indicator');
+      setTimeout(() => this.addIndicator(), 500);
+      return;
+    }
+    
     const indicator = document.createElement('div');
     indicator.id = 'pr-file-viewer-indicator';
     indicator.textContent = 'GitHub PR File Viewer Active';
@@ -724,9 +757,20 @@ class GithubPRFileViewer {
 function initExtension() {
   debugLog('Extension script loaded');
   
-  // Add debug panel if in debug mode
-  addDebugPanel();
-  
+  // Wait for document to be ready for debug panel
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      addDebugPanel();
+      startExtension();
+    });
+  } else {
+    addDebugPanel();
+    startExtension();
+  }
+}
+
+// Start the extension after ensuring DOM is available
+function startExtension() {
   // Create and initialize the PR file viewer
   const prFileViewer = new GithubPRFileViewer();
   prFileViewer.init();
@@ -753,13 +797,20 @@ function initExtension() {
   observer.observe(document, { subtree: true, childList: true });
 }
 
-// Run initialization immediately and also when DOM is fully loaded
-initExtension();
-
-document.addEventListener('DOMContentLoaded', initExtension);
+// Better initialization strategy
+if (document.readyState === 'loading') {
+  debugLog('Document still loading, waiting for DOMContentLoaded');
+  document.addEventListener('DOMContentLoaded', initExtension);
+} else {
+  debugLog('Document already loaded, initializing now');
+  initExtension();
+}
 
 // Also run on window load as a fallback
 window.addEventListener('load', () => {
   debugLog('Window load event triggered');
-  initExtension();
+  // Only initialize if not already initialized
+  if (!document.getElementById('pr-file-viewer-debug')) {
+    initExtension();
+  }
 }); 
