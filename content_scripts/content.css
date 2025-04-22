@@ -1,62 +1,112 @@
 /* GitHub PR File Viewer Styles */
 
+/* Make sure our styles override GitHub styles */
 .pr-file-viewer-collapse-button {
-  margin-left: 8px;
-  padding: 2px 8px;
-  background-color: #f6f8fa;
-  border: 1px solid #d1d5da;
-  border-radius: 3px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
+  margin-left: 8px !important;
+  padding: 2px 8px !important;
+  background-color: #f6f8fa !important;
+  border: 1px solid #d1d5da !important;
+  border-radius: 3px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  position: relative !important;
+  z-index: 5 !important;
+  color: #24292e !important;
 }
 
 .pr-file-viewer-collapse-button:hover {
-  background-color: #e1e4e8;
+  background-color: #e1e4e8 !important;
 }
 
 .pr-file-viewer-viewed {
-  position: relative;
+  position: relative !important;
 }
 
 .pr-file-viewer-viewed::before {
-  content: "✓";
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  color: #2cbe4e;
-  font-weight: bold;
-  z-index: 1;
+  content: "✓" !important;
+  position: absolute !important;
+  top: 5px !important;
+  right: 10px !important;
+  color: #2cbe4e !important;
+  font-weight: bold !important;
+  font-size: 16px !important;
+  z-index: 10 !important;
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border-radius: 50% !important;
+  width: 20px !important;
+  height: 20px !important;
+  text-align: center !important;
+  line-height: 20px !important;
 }
 
-.pr-file-viewer-collapsed .file-header {
-  border-bottom-left-radius: 3px;
-  border-bottom-right-radius: 3px;
+/* Handle different GitHub file selectors */
+.pr-file-viewer-collapsed .file-header,
+.pr-file-viewer-collapsed .js-file-header,
+.pr-file-viewer-collapsed .js-details-container > .Details-content--hidden-not-important {
+  border-bottom-left-radius: 3px !important;
+  border-bottom-right-radius: 3px !important;
 }
 
 .pr-file-viewer-collapsed .file-info,
 .pr-file-viewer-collapsed .js-file-content,
-.pr-file-viewer-collapsed .data {
-  display: none;
+.pr-file-viewer-collapsed .js-file-content-wrapper,
+.pr-file-viewer-collapsed .data,
+.pr-file-viewer-collapsed > div:not(.file-header):not(.js-file-header),
+.pr-file-viewer-collapsed .js-details-container > div:not(.Details-content--hidden-not-important) {
+  display: none !important;
+}
+
+.pr-file-viewer-controls {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  margin: 10px 0 !important;
+  gap: 8px !important;
+  padding: 10px !important;
+  background-color: #f6f8fa !important;
+  border: 1px solid #e1e4e8 !important;
+  border-radius: 6px !important;
+  width: 100% !important;
 }
 
 .pr-file-viewer-toggle-all {
-  margin: 10px 0;
-  padding: 6px 12px;
-  background-color: #f6f8fa;
-  border: 1px solid #d1d5da;
-  border-radius: 3px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
+  margin: 0 !important;
+  padding: 6px 12px !important;
+  background-color: #f6f8fa !important;
+  border: 1px solid #d1d5da !important;
+  border-radius: 3px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  color: #24292e !important;
 }
 
 .pr-file-viewer-toggle-all:hover {
-  background-color: #e1e4e8;
+  background-color: #e1e4e8 !important;
 }
 
 .pr-file-viewer-status {
-  margin-left: 12px;
-  font-size: 12px;
-  color: #586069;
+  margin-left: 12px !important;
+  font-size: 12px !important;
+  color: #586069 !important;
+  font-weight: 600 !important;
+}
+
+/* Highlight the file being viewed more visibly */
+.js-file.pr-file-viewer-viewed,
+.file.pr-file-viewer-viewed,
+[data-file-type].pr-file-viewer-viewed {
+  border: 1px solid #2cbe4e !important;
+}
+
+/* Add pulsing animation to debug indicator */
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+#pr-file-viewer-indicator {
+  animation: pulse 2s infinite !important;
 } 

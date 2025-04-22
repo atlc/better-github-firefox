@@ -8,6 +8,7 @@ A Firefox extension that improves pull request review experience on GitHub by al
 - Adds collapse/expand buttons to each file
 - Option to automatically collapse files after viewing
 - Global controls to expand all files or collapse all viewed files
+- Mark all files as viewed or unviewed with a single click
 - Shows a count of viewed vs. total files
 - Persists your view state between browser sessions
 
@@ -19,7 +20,7 @@ When you're reviewing a GitHub pull request, this extension:
 2. Tracks which files you've viewed (when you scroll through them)
 3. Marks viewed files with a checkmark
 4. Allows you to collapse viewed files to keep track of your progress
-5. Provides toggles at the top to expand all or collapse viewed files
+5. Provides toggles to expand all, collapse viewed, mark all as viewed, or mark all as unviewed
 
 ## Installation
 
