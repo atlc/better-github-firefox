@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Addon Options</h1>
+    
+    <form id="options-form">
+      <div class="option-group">
+        <h2>General Settings</h2>
+        
+        <div class="option">
+          <label for="theme-select">Theme:</label>
+          <select id="theme-select">
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+            <option value="system">System Default</option>
+          </select>
+        </div>
+        
+        <div class="option">
+          <label for="notifications-checkbox">Enable Notifications:</label>
+          <input type="checkbox" id="notifications-checkbox">
+        </div>
+      </div>
+      
+      <div class="option-group">
+        <h2>Advanced Settings</h2>
+        
+        <div class="option">
+          <label for="refresh-interval">Refresh Interval (seconds):</label>
+          <input type="number" id="refresh-interval" min="5" max="3600" value="60">
+        </div>
+        
+        <div class="option">
+          <label for="custom-css">Custom CSS:</label>
+          <textarea id="custom-css" rows="4" placeholder="Enter custom CSS here"></textarea>
+        </div>
+      </div>
+      
+      <div class="button-group">
+        <button type="submit" id="save-button">Save Options</button>
+        <button type="button" id="reset-button">Reset to Defaults</button>
+      </div>
+    </form>
+    
+    <div id="status-message"></div>
+  </div>
+  
+  <script src="options.js"></script>
+</body>
+</html> 
